@@ -4,19 +4,42 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 
 ## 1. What was broken when you started?
 
-- What did the game look like the first time you ran it?
-- List at least two concrete bugs you noticed at the start  
-  (for example: "the secret number kept changing" or "the hints were backwards").
+- The first time I ran the game, the numbers immediately felt disconnected from the instructions. The side-banner claimed 8 attempts were allowed, yet the counter showed only 7 remained before I had even made my first guess. 
+
+- One concrete bug I noticed was that the hints were fundamentally backwards; when I guessed -199 for a secret number of 27, the AI told me to "go lower." Another major issue was the game's state management. The "Start a New Game" button failed to reset the board or the secret number. To clear the previous "Game Over" screen and try a new round, I had to manually refresh my browser - as the session state was effectively frozen.
+
+- Another major bug was the behavior of the difficulty and range settings. Even though I selected "Easy" mode ( which indicates a Range of 1 to 20), the game Developer Debug Info labeled the difficulty as "Normal" and allowed me to enter numbers like 1000 and 10,000 without any validation. In one instance, guessing 1000 for range of 1–20 resulted in the game telling me to "go higher," proving that the underlying secret number was not staying within the boundaries noted in the sidebar.
+
 
 ---
 
 ## 2. How did you use AI as a teammate?
 
 - Which AI tools did you use on this project (for example: ChatGPT, Gemini, Copilot)?
+
+*I used Gemini as a high-level "Mission Control" for environment strategy and GitHub Copilot Agent as a debugging teammate, mostly for root-cause analysis, refactoring support, and quick test targeting.*
+
+==========================================================
+
 - Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
+
+*The Agent helped me trace the check_guess bug to a type mismatch where the secret became a string and comparisons turned into lexicographical (string) comparisons instead of numeric. i.e.,"-199" was treated as less than "27"—rather than numeric.* 
+
+*That suggestion was correct, and I used it to move and simplify check_guess in logic_utils.py so it always compares numbers and returns the correct High/Low hints*
+
+==========================================================
+
 - Give one example of an AI suggestion that was incorrect or misleading (including what the AI suggested and how you verified the result).
 
----
+
+*One suggestion was misleading, though: I was advised to use a different return shape for `check_guess` (a tuple format that didn’t match what the Streamlit UI expected), which would have broken the app* 
+
+*I caught this by checking how `outcome, message` is consumed in app.py. app.py expects two separate items — a Result and a Message. The Agent, however, suggsted one single Tuple (a "box" containing both items).*
+
+*I verified everything two ways: with `pytest` in `test_game_logic.py` for independent logic checks, and with manual boundary tests in the UI using guesses like 1, -1, 100, and 101 to confirm the hints stayed accurate.*
+
+--- 
+
 
 ## 3. Debugging and testing your fixes
 
