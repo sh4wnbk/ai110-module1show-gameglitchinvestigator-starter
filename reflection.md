@@ -44,9 +44,22 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 ## 3. Debugging and testing your fixes
 
 - How did you decide whether a bug was really fixed?
-- Describe at least one test you ran (manual or using pytest)  
-  and what it showed you about your code.
+
+*A fix didn't count as done until it passed two checks: the automated tests and a manual run in the browser. If `pytest` passed but the UI still behaved oddly, I kept digging. If the UI looked right but a test failed, I hadn't actually solved the root problem — I'd just hidden it. Both had to agree before I moved on.*
+
+==========================================================
+
+- Describe at least one test you ran (manual or using pytest) and what it showed you about your code.
+
+*The clearest example was `test_guess_too_high` in `test_game_logic.py`. It calls `check_guess(60, 50)` and asserts the outcome is `"Too High"` and the hint contains `"LOWER"`. Before the fix, that test failed — the function returned `"Go HIGHER!"` when the guess was already too high. Seeing the test fail in red made the bug undeniable. Once I corrected the hint logic in `logic_utils.py`, the test went green and the UI matched.*
+
+*I also ran manual boundary tests directly in the app — guesses like 1, -1, 100, and 101 — to confirm the hints stayed accurate at the edges of the range, not just at the midpoint.*
+
+==========================================================
+
 - Did AI help you design or understand any tests? How?
+
+*GitHub Copilot Agent helped me understand what the tests were actually checking. When I first read the assert statements, I wasn't sure why the tests checked for `"LOWER"` in the hint string rather than the full message. The Agent explained that partial string matching (`"LOWER" in hint`) is more resilient than checking for an exact emoji-and-text match — a small implementation change wouldn't break the test unnecessarily. That made the test design click for me.*
 
 ---
 
