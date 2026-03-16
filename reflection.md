@@ -4,11 +4,11 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 
 ## 1. What was broken when you started?
 
-- The first time I ran the game, the numbers immediately felt disconnected from the instructions. The side-banner claimed 8 attempts were allowed, yet the counter showed only 7 remained before I had even made my first guess. 
+- *The first time I ran the game, the numbers immediately felt disconnected from the instructions. The side-banner claimed 8 attempts were allowed, yet the counter showed only 7 remained before I had even made my first guess.*
 
-- One concrete bug I noticed was that the hints were fundamentally backwards; when I guessed -199 for a secret number of 27, the AI told me to "go lower." Another major issue was the game's state management. The "Start a New Game" button failed to reset the board or the secret number. To clear the previous "Game Over" screen and try a new round, I had to manually refresh my browser - as the session state was effectively frozen.
+- *One concrete bug I noticed was that the hints were fundamentally backwards; when I guessed -199 for a secret number of 27, the AI told me to "go lower." Another major issue was the game's state management. The "Start a New Game" button failed to reset the board or the secret number. To clear the previous "Game Over" screen and try a new round, I had to manually refresh my browser - as the session state was effectively frozen.*
 
-- Another major bug was the behavior of the difficulty and range settings. Even though I selected "Easy" mode ( which indicates a Range of 1 to 20), the game Developer Debug Info labeled the difficulty as "Normal" and allowed me to enter numbers like 1000 and 10,000 without any validation. In one instance, guessing 1000 for range of 1–20 resulted in the game telling me to "go higher," proving that the underlying secret number was not staying within the boundaries noted in the sidebar.
+- *Another major bug was the behavior of the difficulty and range settings. Even though I selected "Easy" mode ( which indicates a Range of 1 to 20), the game Developer Debug Info labeled the difficulty as "Normal" and allowed me to enter numbers like 1000 and 10,000 without any validation. In one instance, guessing 1000 for range of 1–20 resulted in the game telling me to "go higher," proving that the underlying secret number was not staying within the boundaries noted in the sidebar.*
 
 
 ---
@@ -66,8 +66,20 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 ## 4. What did you learn about Streamlit and state?
 
 - In your own words, explain why the secret number kept changing in the original app.
+
+*Every time I clicked "Submit," Streamlit re-ran the entire script from the top. On even-numbered attempts, the code deliberately converted the secret to a string — so `st.session_state.secret` would be 27, but the local `secret` variable passed to `check_guess` would be `"27"`. That string/integer mismatch made comparisons behave like alphabetical sorting, not math.*
+
+==========================================================
+
 - How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
+
+*Imagine every button click refreshes the entire page and re-runs your Python script from line one. Any regular variable you set just disappears — it starts fresh every time. `st.session_state` is like a sticky notepad that survives those refreshes. Anything you store there stays put between clicks.*
+
+==========================================================
+
 - What change did you make that finally gave the game a stable secret number?
+
+*I removed the conditional that was coercing the secret to a string on even turns, and made sure `check_guess` always receives `st.session_state.secret` as a plain integer. Once the comparison was always numeric, the secret stopped "shifting" and the hints started making sense.*
 
 ---
 
@@ -75,5 +87,17 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 
 - What is one habit or strategy from this project that you want to reuse in future labs or projects?
   - This could be a testing habit, a prompting strategy, or a way you used Git.
+
+*Running `pytest` and then manually testing the live app before calling anything done. The two-step check kept me honest — a passing test doesn't mean the UI behaves correctly, and a working UI doesn't mean the logic is solid. I'll use both from now on.*
+
+==========================================================
+
 - What is one thing you would do differently next time you work with AI on a coding task?
+
+*I'd review the Agent's diffs line by line before accepting them, especially in Agent mode where multiple files can change at once. I accepted one refactor suggestion without fully reading it and had to undo it. That cost more time than a careful review would have.*
+
+==========================================================
+
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
+
+*I came in thinking AI code either works or it semi works. Now I know it can look completely reasonable, pass a quick read, and still be subtly wrong in ways that only show up when you actually run it.*

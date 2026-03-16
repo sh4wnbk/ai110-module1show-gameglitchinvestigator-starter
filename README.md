@@ -26,14 +26,23 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+- [x] Describe the game's purpose.
+      *A number guessing game where the player picks a difficulty level, gets a limited number of attempts, and uses High/Low hints to find the secret number.*
+
+- [x] Detail which bugs you found.
+      *The hints were backwards — guessing too high told you to go higher. The secret was silently converted to a string on even-numbered attempts, breaking numeric comparisons. And the New Game button didn't reset the game status, so a finished game was stuck until you refreshed the browser.*
+
+- [x] Explain what fixes you applied.
+      *Fixed the hint logic in check_guess, removed the string coercion so comparisons always use integers, moved all game logic from app.py into logic_utils.py, and added st.session_state.status = "playing" to the New Game reset.*
 
 ## 📸 Demo
 
-- [ ] [Insert a screenshot of your fixed, winning game here]
+![Demo](demo.png)
 
 ## 🚀 Stretch Features
 
 - [ ] [If you choose to complete Challenge 4, insert a screenshot of your Enhanced Game UI here]
+### Challenge 1: Advanced Edge-Case Testing
+*I used GitHub Copilot to generate three edge-case tests to ensure the game logic is robust against unexpected user input (large numbers, decimals, and non-numeric strings).*
+
+![Edge Case Test Results](edge_cases.png)
